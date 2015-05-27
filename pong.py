@@ -42,6 +42,8 @@ class Game():
 		pygame.draw.line(display_surf, WHITE,(int(window_width/2),0),(int(window_width/2),window_height),int(self.line_thickness/4))
 		
 	def update(self):
+		self.ball.move()
+				
 		self.draw_arena()
 		self.ball.draw()
 		self.paddles['user'].draw()
@@ -82,6 +84,41 @@ class Ball(pygame.sprite.Sprite):
 	# Draw the ball
 	def draw(self):
 		pygame.draw.rect(display_surf,WHITE,self.rect)
+	
+	# Move the ball
+	def move(self):
+		self.rect.x += (self.dir_x * self.speed)
+		self.rect.y += (self.dir_y * self.speed)
+		
+		# Check for a collision with a wall, then bounce off it
+		if self.hit_ceiling() or self.hit_floor():
+			self.bounce('y')
+		if self.hit_wall():
+			self.bounce('x')
+			
+	def bounce(self,axis):
+		if axis == 'x':
+			self.dir_x *= -1
+		elif axis == 'y':
+			self.dir_y *= -1
+	
+	def hit_wall(self):
+		if ((self.dir_x == -1 and self.rect.left <= self.w) or (self.dir_x == 1 and self.rect.right >= window_width - self.w)):
+			return True
+		else:
+			return False
+			
+	def hit_ceiling(self):
+		if self.dir_y == -1 and self.rect.top <= self.w:
+			return True
+		else:
+			return False
+	
+	def hit_floor(self):
+		if self.dir_y == 1 and self.rect.bottom >= window_height - self.w:
+			return True
+		else:
+			return False
 		
 # Main function
 def main():
