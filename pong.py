@@ -43,7 +43,8 @@ class Game():
 		
 	def update(self):
 		self.ball.move()
-				
+		self.paddles['computer'].move()
+			
 		self.draw_arena()
 		self.ball.draw()
 		self.paddles['user'].draw()
@@ -72,6 +73,12 @@ class AutoPaddle(Paddle):
 		self.ball = ball
 		self.speed = speed
 
+	def move(self):
+		if self.rect.centery < self.ball.rect.centery:
+			self.rect.y += self.speed
+		else:
+			self.rect.y -= self.speed
+		
 class Ball(pygame.sprite.Sprite):
 	def __init__(self,x,y,w,h,speed):
 		self.x = x
