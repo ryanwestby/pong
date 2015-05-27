@@ -63,6 +63,9 @@ class Paddle(pygame.sprite.Sprite):
 	def draw(self):
 		pygame.draw.rect(display_surf, WHITE, self.rect)
 
+	def move(self,pos):
+		self.rect.y = pos[1]
+		
 class AutoPaddle(Paddle):
 	def __init__(self,x,w,h,ball,speed):
 		super(self.__class__,self).__init__(x,w,h)
@@ -134,6 +137,8 @@ def main():
 			if event.type == QUIT:
 				pygame.quit()
 				sys.exit()
+			elif event.type == MOUSEMOTION:
+				game.paddles['user'].move(event.pos)
 		
 		game.update()
 		pygame.display.update()
