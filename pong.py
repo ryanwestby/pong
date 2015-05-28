@@ -54,8 +54,10 @@ class Game():
 			self.ball.bounce('x')
 		elif self.ball.pass_computer():
 			self.player_score += 1
+			self.ball.set_ball()
 		elif self.ball.pass_player():
 			self.comp_score += 1
+			self.ball.set_ball()
 		
 		self.draw_arena()
 		self.ball.draw()
@@ -119,11 +121,14 @@ class Ball(pygame.sprite.Sprite):
 		self.rect.x += (self.dir_x * self.speed)
 		self.rect.y += (self.dir_y * self.speed)
 		
-		# Check for a collision with a wall, then bounce off it
+		# Check for a collision with a ceiling or floor, then bounce off it
 		if self.hit_ceiling() or self.hit_floor():
 			self.bounce('y')
-		if self.hit_wall():
-			self.bounce('x')
+		
+	def set_ball(self):
+		pygame.time.wait(500)
+		self.rect.x = int(window_width/2 - self.w/2)
+		self.rect.y = int(window_height/2 - self.w/2)
 			
 	def bounce(self,axis):
 		if axis == 'x':
