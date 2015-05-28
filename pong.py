@@ -44,7 +44,12 @@ class Game():
 	def update(self):
 		self.ball.move()
 		self.paddles['computer'].move()
-			
+		
+		if self.ball.hit_paddle(self.paddles['computer']):
+			self.ball.bounce('x')
+		elif self.ball.hit_paddle(self.paddles['user']):
+			self.ball.bounce('x')
+		
 		self.draw_arena()
 		self.ball.draw()
 		self.paddles['user'].draw()
@@ -62,6 +67,12 @@ class Paddle(pygame.sprite.Sprite):
 		
 	# Draw the paddle
 	def draw(self):
+		#Stops paddle moving too low
+		if self.rect.bottom > window_height - self.w:
+			self.rect.bottom = window_height - self.w
+		#Stops paddle moving too high
+		elif self.rect.top < self.w:
+			self.rect.top = self.w
 		pygame.draw.rect(display_surf, WHITE, self.rect)
 
 	def move(self,pos):
@@ -111,6 +122,12 @@ class Ball(pygame.sprite.Sprite):
 			self.dir_x *= -1
 		elif axis == 'y':
 			self.dir_y *= -1
+	
+	def hit_paddle(self,paddle):
+		if pygame.sprite.collide_rect(self,paddle):
+			return True
+		else:
+			return False
 	
 	def hit_wall(self):
 		if ((self.dir_x == -1 and self.rect.left <= self.w) or (self.dir_x == 1 and self.rect.right >= window_width - self.w)):
