@@ -16,7 +16,8 @@ class Game():
 	def __init__(self,line_thickness=10,speed=4):
 		self.line_thickness = line_thickness
 		self.speed = speed
-		self.score = 0
+		self.player_score = 0
+		self.comp_score = 0
 		
 		# Initiate variables and set starting positions
 		ball_x = int(window_width/2 - self.line_thickness/2)
@@ -30,6 +31,8 @@ class Game():
 		computer_paddle_x = window_width - paddle_width - 20
 		self.paddles['user'] = Paddle(user_paddle_x, paddle_width, paddle_height)
 		self.paddles['computer'] = AutoPaddle(computer_paddle_x, paddle_width, paddle_height, self.ball, self.speed)
+	
+		self.scoreboard = Scoreboard(0)
 	
 	# Draw the arena for the game to be played in
 	def draw_arena(self):
@@ -49,11 +52,16 @@ class Game():
 			self.ball.bounce('x')
 		elif self.ball.hit_paddle(self.paddles['user']):
 			self.ball.bounce('x')
+		elif self.ball.pass_computer():
+			self.player_score += 1
+		elif self.ball.pass_player():
+			self.comp_score += 1
 		
 		self.draw_arena()
 		self.ball.draw()
 		self.paddles['user'].draw()
 		self.paddles['computer'].draw()
+		self.scoreboard.display(self.player_score, self.comp_score)
 
 class Paddle(pygame.sprite.Sprite):
 	def __init__(self,x,w,h):
@@ -86,9 +94,9 @@ class AutoPaddle(Paddle):
 
 	def move(self):
 		if self.rect.centery < self.ball.rect.centery:
-			self.rect.y += self.speed
+			self.rect.y += self.speed-1
 		else:
-			self.rect.y -= self.speed
+			self.rect.y -= self.speed-1
 		
 class Ball(pygame.sprite.Sprite):
 	def __init__(self,x,y,w,h,speed):
@@ -146,7 +154,36 @@ class Ball(pygame.sprite.Sprite):
 			return True
 		else:
 			return False
+
+	def pass_player(self):
+		if self.rect.left <= self.w:
+			return True
+		else:
+			return False
+	
+	def pass_computer(self):
+		if self.rect.right >= window_width - self.w:
+			return True
+		else:
+			return False
+			
+class Scoreboard():
+	def __init__(self, player_score=0, comp_score=0,x=window_width-250,y=25,font_size=20):
+		self.player_score = player_score
+		self.comp_score = comp_score
+		self.x = x
+		self.y = y
+		self.font = pygame.font.Font('freesansbold.ttf', font_size)
 		
+	# Display score
+	def display(self,player_score,comp_score):
+		self.player_score = player_score
+		self.comp_score = comp_score
+		result_surf = self.font.render('%s             %s' %(self.player_score, self.comp_score), True, WHITE)
+		rect = result_surf.get_rect()
+		rect.topleft = (self.x, self.y)
+		display_surf.blit(result_surf,rect)
+			
 # Main function
 def main():
 	pygame.init()
