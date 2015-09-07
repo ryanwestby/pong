@@ -11,7 +11,4 @@ Screenshot:
 Features to be added:
 - Title screen
 - Variable speeds based on spot of collision with paddle
-- Options for a second set of paddles on the floor and ceiling, one AI and one controller by arrow keys
-- Option to choose amount of balls
-- Need to fix bug where ball gets stuck inside paddle's rectangle
 - Add sound effects
